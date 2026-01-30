@@ -9,15 +9,17 @@
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.6; }
         .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .lang-control { margin-bottom: 24px; text-align: right; }
-        select { padding: 10px; border-radius: 10px; border: 1px solid #d2d2d7; outline: none; cursor: pointer; }
+        select { padding: 10px; border-radius: 10px; border: 1px solid #d2d2d7; outline: none; cursor: pointer; background: white; }
         .lang-content { display: none; animation: fadeIn 0.3s ease; }
         .lang-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        h1 { font-size: 28px; margin-bottom: 8px; }
-        h2 { font-size: 20px; margin-top: 30px; color: var(--primary); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { font-size: 28px; margin-bottom: 8px; font-weight: 700; }
+        h2 { font-size: 20px; margin-top: 30px; color: var(--primary); font-weight: 600; }
         .date { color: var(--secondary); font-size: 14px; margin-bottom: 20px; }
-        .contact { background: #f9f9fb; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #eee; }
+        .contact { background: #f9f9fb; padding: 20px; border-radius: 12px; margin-top: 30px; border: 1px solid #eee; }
         footer { text-align: center; margin-top: 40px; color: var(--secondary); font-size: 12px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -39,69 +41,77 @@
     <div id="zh" class="lang-content active">
         <h1>隐私政策</h1>
         <div class="date">更新日期：2026年1月30日</div>
-        <h2>1. 数据处理</h2>
-        <p>Jture 采用 Serverless 架构。您的数据存储在设备本地及 iCloud 中。AI 功能由 DeepSeek 支持。</p>
-        <h2>2. 安全承诺</h2>
-        <p>内置浏览器严禁访问登录凭据及密码。AI 仅处理您主动发送的文本。</p>
-        <div class="contact">联系我们: jturehelp@gmail.com</div>
+        <p>Jture（以下简称“我们”）深知隐私对您的重要性。本政策说明我们如何处理您的个人信息。</p>
+        <h2>1. 数据处理原则</h2>
+        <p>Jture 采用 Serverless 架构。您的所有简历和职位数据均存储在您的设备本地及个人 <strong>iCloud</strong> 中。我们不运行中央服务器来存储您的私密信息。</p>
+        <h2>2. AI 服务声明</h2>
+        <p>AI 功能由 <strong>DeepSeek AI</strong> 支持。数据仅在处理时瞬时传输，不会在云端持久化存储。用户在首次使用前需明确表示同意。</p>
+        <h2>3. 安全与浏览器</h2>
+        <p>内置浏览器功能严禁且无法访问您的登录凭据或密码。我们仅处理您提供的专业简历文本。</p>
+        <div class="contact">📧 联系我们: jturehelp@gmail.com</div>
     </div>
 
     <div id="en" class="lang-content">
         <h1>Privacy Policy</h1>
-        <div class="date">Updated: Jan 30, 2026</div>
-        <h2>1. Data Processing</h2>
-        <p>Jture uses a Serverless architecture. Data is stored locally and on iCloud. AI is powered by DeepSeek.</p>
-        <h2>2. Security</h2>
-        <p>The in-app browser never accesses passwords. AI only processes data with your explicit consent.</p>
-        <div class="contact">Contact: jturehelp@gmail.com</div>
+        <div class="date">Last Updated: Jan 30, 2026</div>
+        <p>Jture values your privacy. This policy explains our data handling practices.</p>
+        <h2>1. Data Principles</h2>
+        <p>Jture uses a Serverless architecture. Your data is stored locally and synced via <strong>iCloud</strong>. We do not store private data on our servers.</p>
+        <h2>2. AI Services</h2>
+        <p>AI features are powered by <strong>DeepSeek AI</strong>. Data is transmitted momentarily for processing and is not persisted on the cloud.</p>
+        <div class="contact">📧 Contact: jturehelp@gmail.com</div>
     </div>
 
     <div id="ja" class="lang-content">
         <h1>プライバシーポリシー</h1>
         <div class="date">更新日：2026年1月30日</div>
-        <h2>1. データ処理</h2>
-        <p>Jtureはサーバーレスアーキテクチャを採用しています。データはローカルおよびiCloudに保存されます。</p>
-        <h2>2. セキュリティ</h2>
-        <p>ブラウザ機能はパスワードにアクセスしません。AI処理にはユーザーの同意が必要です。</p>
-        <div class="contact">お問い合わせ: jturehelp@gmail.com</div>
+        <h2>1. データ処理原則</h2>
+        <p>Jtureはサーバーレスアーキテクチャを採用しています。データはローカルおよび <strong>iCloud</strong> に保存されます。</p>
+        <h2>2. AIサービス声明</h2>
+        <p>AI機能は <strong>DeepSeek AI</strong> によってサポートされています。データは処理時にのみ転送され、クラウドに保存されません。</p>
+        <div class="contact">📧 お問い合わせ: jturehelp@gmail.com</div>
     </div>
 
     <div id="ko" class="lang-content">
         <h1>개인정보 처리방침</h1>
         <div class="date">업데이트: 2026년 1월 30일</div>
-        <h2>1. 데이터 처리</h2>
-        <p>Jture는 서버리스 아키텍처를 사용합니다. 데이터는 로컬 기기 및 iCloud에 저장됩니다.</p>
-        <h2>2. 보안</h2>
-        <p>인앱 브라우저는 비밀번호에 접근하지 않습니다. AI는 사용자의 명시적 동의 하에만 작동합니다.</p>
-        <div class="contact">문의하기: jturehelp@gmail.com</div>
+        <h2>1. 데이터 처리 원칙</h2>
+        <p>Jture는 서버리스 아키텍처를 사용합니다. 데이터는 로컬 기기 및 <strong>iCloud</strong> 에 저장됩니다.</p>
+        <h2>2. AI 서비스 고지</h2>
+        <p>AI 기능은 <strong>DeepSeek AI</strong> 에서 지원합니다. 데이터는 처리 중에만 전송되며 클라우드에 유지되지 않습니다.</p>
+        <div class="contact">📧 문의하기: jturehelp@gmail.com</div>
     </div>
 
     <div id="es" class="lang-content">
         <h1>Política de Privacidad</h1>
         <div class="date">Actualizado: 30 de enero de 2026</div>
-        <p>Arquitectura sin servidor. Datos en iCloud. IA impulsada por DeepSeek. No accedemos a sus contraseñas.</p>
-        <div class="contact">Contacto: jturehelp@gmail.com</div>
+        <h2>1. Principios de Datos</h2>
+        <p>Arquitectura sin servidor. Datos en <strong>iCloud</strong>. IA impulsada por <strong>DeepSeek AI</strong>.</p>
+        <div class="contact">📧 Contacto: jturehelp@gmail.com</div>
     </div>
 
     <div id="fr" class="lang-content">
         <h1>Politique de Confidentialité</h1>
         <div class="date">Mis à jour: 30 Janvier 2026</div>
-        <p>Architecture Serverless. Données sur iCloud. IA par DeepSeek. Pas d'accès aux mots de passe.</p>
-        <div class="contact">Contact: jturehelp@gmail.com</div>
+        <h2>1. Traitement des données</h2>
+        <p>Architecture Serverless. Données sur <strong>iCloud</strong>. IA par <strong>DeepSeek AI</strong>.</p>
+        <div class="contact">📧 Contact: jturehelp@gmail.com</div>
     </div>
 
     <div id="de" class="lang-content">
         <h1>Datenschutzerklärung</h1>
         <div class="date">Aktualisiert: 30. Januar 2026</div>
-        <p>Serverlose Architektur. Daten in iCloud. KI von DeepSeek. Kein Zugriff auf Passwörter.</p>
-        <div class="contact">Kontakt: jturehelp@gmail.com</div>
+        <h2>1. Datenverarbeitung</h2>
+        <p>Serverlose Architektur. Daten in <strong>iCloud</strong>. KI von <strong>DeepSeek AI</strong>.</p>
+        <div class="contact">📧 Kontakt: jturehelp@gmail.com</div>
     </div>
 
     <div id="pt" class="lang-content">
         <h1>Política de Privacidade</h1>
         <div class="date">Atualizado: 30 de janeiro de 2026</div>
-        <p>Arquitetura Serverless. Dados no iCloud. IA do DeepSeek. Sem acesso a senhas.</p>
-        <div class="contact">Contato: jturehelp@gmail.com</div>
+        <h2>1. Processamento de Dados</h2>
+        <p>Arquitetura Serverless. Dados no <strong>iCloud</strong>. IA do <strong>DeepSeek AI</strong>.</p>
+        <div class="contact">📧 Contato: jturehelp@gmail.com</div>
     </div>
 
 </div>
@@ -110,14 +120,11 @@
 
 <script>
     function updateLang(lang) {
-        // 隐藏所有内容
         document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('active'));
-        // 显示选中的语言内容
         const target = document.getElementById(lang);
         if (target) target.classList.add('active');
     }
 
-    // 自动检测浏览器语言并初始化
     window.onload = () => {
         const browserLang = navigator.language.split('-')[0];
         const supported = ['zh', 'en', 'ja', 'ko', 'es', 'fr', 'de', 'pt'];
