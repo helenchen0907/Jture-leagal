@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - Jture AI</title>
     <style>
-        :root { --primary: #007AFF; --bg: #F5F5F7; --text: #1D1D1F; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.6; }
-        .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .lang-switcher { margin-bottom: 20px; text-align: right; }
-        select { padding: 8px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
-        .content-section { display: none; }
+        :root { --primary: #007AFF; --bg: #F5F5F7; --text: #1D1D1F; --secondary: #86868B; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+        .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
+        .lang-switcher { margin-bottom: 24px; text-align: right; }
+        select { padding: 10px 16px; border-radius: 12px; border: 1px solid #d2d2d7; background: #fff; font-size: 14px; cursor: pointer; outline: none; transition: border 0.3s; }
+        select:hover { border-color: var(--primary); }
+        .content-section { display: none; animation: fadeIn 0.4s ease; }
         .content-section.active { display: block; }
-        h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
-        h2 { font-size: 18px; margin-top: 25px; color: var(--primary); }
-        footer { text-align: center; margin-top: 40px; color: #86868B; font-size: 12px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .date { color: var(--secondary); font-size: 14px; margin-bottom: 32px; }
+        h2 { font-size: 20px; margin-top: 36px; color: var(--text); font-weight: 600; }
+        p, li { font-size: 16px; color: #424245; }
+        footer { text-align: center; margin-top: 50px; color: var(--secondary); font-size: 13px; }
     </style>
 </head>
 <body>
@@ -34,34 +38,17 @@
 
         <div id="zh" class="content-section active">
             <h1>隐私政策</h1>
-            <p>最后更新：2026年1月30日</p>
-            <h2>1. 数据处理</h2>
-            <p>Jture 采用 Serverless 架构。您的简历和职位数据存储在设备本地及 iCloud 中。AI 功能由 DeepSeek 提供支持。</p>
+            <div class="date">最后更新日期：2026年1月30日</div>
+            <h2>1. 数据处理原则</h2>
+            <p>Jture 采用 Serverless 架构。您的简历和职位数据存储在设备本地及 <strong>iCloud</strong> 中。我们不运行中央服务器来存储您的私人信息。</p>
+            <h2>2. AI 服务声明</h2>
+            <p>AI 功能由 <strong>DeepSeek AI</strong> 提供支持。您的数据仅在处理时瞬时传输，不会在云端持久化存储。</p>
         </div>
 
         <div id="en" class="content-section">
             <h1>Privacy Policy</h1>
-            <p>Last Updated: Jan 30, 2026</p>
-            <h2>1. Data Handling</h2>
-            <p>Jture uses a serverless architecture. Your data is stored locally and synced via iCloud. AI features are powered by DeepSeek.</p>
-        </div>
-
-        </div>
-
-    <script>
-        function switchLang(lang) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(lang);
-            if (target) target.classList.add('active');
-        }
-        // 自动检测浏览器语言
-        const browserLang = navigator.language.split('-')[0];
-        const supported = ['zh', 'en', 'ja', 'ko', 'es', 'fr', 'de', 'pt'];
-        if (supported.includes(browserLang)) {
-            document.getElementById('langSelect').value = browserLang;
-            switchLang(browserLang);
-        }
-    </script>
-    <footer>&copy; 2026 Jture AI. All Rights Reserved.</footer>
-</body>
-</html>
+            <div class="date">Last Updated: January 30, 2026</div>
+            <h2>1. Data Principles</h2>
+            <p>Jture uses a Serverless architecture. Your resume and application data are stored locally and synced via <strong>iCloud</strong>. No central servers store your private data.</p>
+            <h2>2. AI Services</h2>
+            <p>AI features are powered by <strong>DeepSeek AI</strong>. Data is transmitted momentarily for processing and is
