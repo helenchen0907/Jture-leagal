@@ -1,138 +1,565 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Jture AI</title>
+    <title>Jture Privacy Policy</title>
     <style>
-        :root { --primary: #007AFF; --bg: #F5F5F7; --text: #1D1D1F; --secondary: #86868B; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.6; }
-        .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .lang-control { margin-bottom: 24px; text-align: right; }
-        select { padding: 10px; border-radius: 10px; border: 1px solid #d2d2d7; outline: none; cursor: pointer; background: white; }
-        .lang-content { display: none; animation: fadeIn 0.3s ease; }
-        .lang-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        h1 { font-size: 28px; margin-bottom: 8px; font-weight: 700; }
-        h2 { font-size: 20px; margin-top: 30px; color: var(--primary); font-weight: 600; }
-        .date { color: var(--secondary); font-size: 14px; margin-bottom: 20px; }
-        .contact { background: #f9f9fb; padding: 20px; border-radius: 12px; margin-top: 30px; border: 1px solid #eee; }
-        footer { text-align: center; margin-top: 40px; color: var(--secondary); font-size: 12px; }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 8px; }
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .lang-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem 1rem;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: var(--text);
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem;
+        }
+
+        .policy-content {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .lang-content {
+            display: none;
+        }
+
+        .lang-content.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        ul {
+            margin: 0.75rem 0 1rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .policy-content {
+                padding: 1.5rem;
+            }
+
+            .lang-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
+    <header class="header">
+        <h1>Jture</h1>
+        <p>Privacy Policy</p>
+    </header>
 
-<div class="container">
-    <div class="lang-control">
-        <select id="langPicker" onchange="updateLang(this.value)">
-            <option value="zh">简体中文</option>
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="ko">한국어</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="pt">Português</option>
-        </select>
-    </div>
+    <nav class="lang-selector">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="zh-CN">简体中文</button>
+        <button class="lang-btn" data-lang="zh-TW">繁體中文</button>
+        <button class="lang-btn" data-lang="ja">日本語</button>
+        <button class="lang-btn" data-lang="ko">한국어</button>
+        <button class="lang-btn" data-lang="es">Español</button>
+        <button class="lang-btn" data-lang="fr">Français</button>
+        <button class="lang-btn" data-lang="de">Deutsch</button>
+    </nav>
 
-    <div id="zh" class="lang-content active">
-        <h1>隐私政策</h1>
-        <div class="date">更新日期：2026年1月30日</div>
-        <p>Jture（以下简称“我们”）深知隐私对您的重要性。本政策说明我们如何处理您的个人信息。</p>
-        <h2>1. 数据处理原则</h2>
-        <p>Jture 采用 Serverless 架构。您的所有简历和职位数据均存储在您的设备本地及个人 <strong>iCloud</strong> 中。我们不运行中央服务器来存储您的私密信息。</p>
-        <h2>2. AI 服务声明</h2>
-        <p>AI 功能由 <strong>DeepSeek AI</strong> 支持。数据仅在处理时瞬时传输，不会在云端持久化存储。用户在首次使用前需明确表示同意。</p>
-        <h2>3. 安全与浏览器</h2>
-        <p>内置浏览器功能严禁且无法访问您的登录凭据或密码。我们仅处理您提供的专业简历文本。</p>
-        <div class="contact">📧 联系我们: jturehelp@gmail.com</div>
-    </div>
+    <main class="container">
+        <div class="policy-content">
 
-    <div id="en" class="lang-content">
-        <h1>Privacy Policy</h1>
-        <div class="date">Last Updated: Jan 30, 2026</div>
-        <p>Jture values your privacy. This policy explains our data handling practices.</p>
-        <h2>1. Data Principles</h2>
-        <p>Jture uses a Serverless architecture. Your data is stored locally and synced via <strong>iCloud</strong>. We do not store private data on our servers.</p>
-        <h2>2. AI Services</h2>
-        <p>AI features are powered by <strong>DeepSeek AI</strong>. Data is transmitted momentarily for processing and is not persisted on the cloud.</p>
-        <div class="contact">📧 Contact: jturehelp@gmail.com</div>
-    </div>
+            <!-- English -->
+            <div class="lang-content active" data-lang="en">
+                <h2>1. Data Processing Principles</h2>
+                <p>Jture is designed with a privacy-first architecture. User resume data and job application information are stored locally on the user's device and, if enabled by the user, synchronized via iCloud. We do not persistently store personal data on our own servers.</p>
 
-    <div id="ja" class="lang-content">
-        <h1>プライバシーポリシー</h1>
-        <div class="date">更新日：2026年1月30日</div>
-        <h2>1. データ処理原則</h2>
-        <p>Jtureはサーバーレスアーキテクチャを採用しています。データはローカルおよび <strong>iCloud</strong> に保存されます。</p>
-        <h2>2. AIサービス声明</h2>
-        <p>AI機能は <strong>DeepSeek AI</strong> によってサポートされています。データは処理時にのみ転送され、クラウドに保存されません。</p>
-        <div class="contact">📧 お問い合わせ: jturehelp@gmail.com</div>
-    </div>
+                <h2>2. AI Services and User Consent</h2>
+                <p>Certain features in Jture are powered by DeepSeek AI.</p>
+                <p>AI processing occurs only when the user explicitly initiates an AI feature (such as job description analysis or form assistance). Before the first AI request, users are clearly informed about:</p>
+                <ul>
+                    <li>What data is sent</li>
+                    <li>The AI provider involved (DeepSeek)</li>
+                    <li>The purpose of processing</li>
+                </ul>
+                <p>Users must explicitly consent before any data is transmitted. Users may decline AI usage and continue using non-AI features of the app.</p>
+                <p>AI-generated content is provided for assistance only. Users are responsible for reviewing and verifying all AI-generated outputs before submission.</p>
 
-    <div id="ko" class="lang-content">
-        <h1>개인정보 처리방침</h1>
-        <div class="date">업데이트: 2026년 1월 30일</div>
-        <h2>1. 데이터 처리 원칙</h2>
-        <p>Jture는 서버리스 아키텍처를 사용합니다. 데이터는 로컬 기기 및 <strong>iCloud</strong> 에 저장됩니다.</p>
-        <h2>2. AI 서비스 고지</h2>
-        <p>AI 기능은 <strong>DeepSeek AI</strong> 에서 지원합니다. 데이터는 처리 중에만 전송되며 클라우드에 유지되지 않습니다.</p>
-        <div class="contact">📧 문의하기: jturehelp@gmail.com</div>
-    </div>
+                <h2>3. In-App Browser and Form Assistance</h2>
+                <p>Jture includes an in-app browser to help users manage job applications.</p>
+                <p>Form assistance operates only on user-provided resume data and does not access login credentials, passwords, or authentication fields. Jture does not collect or store credentials for third-party websites.</p>
 
-    <div id="es" class="lang-content">
-        <h1>Política de Privacidad</h1>
-        <div class="date">Actualizado: 30 de enero de 2026</div>
-        <h2>1. Principios de Datos</h2>
-        <p>Arquitectura sin servidor. Datos en <strong>iCloud</strong>. IA impulsada por <strong>DeepSeek AI</strong>.</p>
-        <div class="contact">📧 Contacto: jturehelp@gmail.com</div>
-    </div>
+                <h2>4. Data Scope</h2>
+                <p>Depending on user actions, Jture may process:</p>
+                <ul>
+                    <li>Resume content provided by the user</li>
+                    <li>Job description text</li>
+                    <li>Application tracking metadata</li>
+                    <li>App usage data required for functionality</li>
+                </ul>
 
-    <div id="fr" class="lang-content">
-        <h1>Politique de Confidentialité</h1>
-        <div class="date">Mis à jour: 30 Janvier 2026</div>
-        <h2>1. Traitement des données</h2>
-        <p>Architecture Serverless. Données sur <strong>iCloud</strong>. IA par <strong>DeepSeek AI</strong>.</p>
-        <div class="contact">📧 Contact: jturehelp@gmail.com</div>
-    </div>
+                <h2>5. User Control</h2>
+                <p>Users may:</p>
+                <ul>
+                    <li>Delete local data at any time</li>
+                    <li>Disable AI features</li>
+                    <li>Control iCloud synchronization through system settings</li>
+                </ul>
 
-    <div id="de" class="lang-content">
-        <h1>Datenschutzerklärung</h1>
-        <div class="date">Aktualisiert: 30. Januar 2026</div>
-        <h2>1. Datenverarbeitung</h2>
-        <p>Serverlose Architektur. Daten in <strong>iCloud</strong>. KI von <strong>DeepSeek AI</strong>.</p>
-        <div class="contact">📧 Kontakt: jturehelp@gmail.com</div>
-    </div>
+                <h2>6. Contact</h2>
+                <p>If you have any questions about this Privacy Policy, please contact:</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
 
-    <div id="pt" class="lang-content">
-        <h1>Política de Privacidade</h1>
-        <div class="date">Atualizado: 30 de janeiro de 2026</div>
-        <h2>1. Processamento de Dados</h2>
-        <p>Arquitetura Serverless. Dados no <strong>iCloud</strong>. IA do <strong>DeepSeek AI</strong>.</p>
-        <div class="contact">📧 Contato: jturehelp@gmail.com</div>
-    </div>
+            <!-- Simplified Chinese -->
+            <div class="lang-content" data-lang="zh-CN">
+                <h2>1. 数据处理原则</h2>
+                <p>Jture 采用隐私优先的架构设计。用户的简历数据和求职申请信息存储在用户设备本地，如果用户启用，也可通过 iCloud 同步。我们不会在自己的服务器上持久存储个人数据。</p>
 
-</div>
+                <h2>2. AI 服务与用户同意</h2>
+                <p>Jture 中的某些功能由 DeepSeek AI 提供支持。</p>
+                <p>仅当用户明确启动 AI 功能（如职位描述分析或表单辅助）时，才会进行 AI 处理。在首次 AI 请求之前，用户将被明确告知：</p>
+                <ul>
+                    <li>发送的数据内容</li>
+                    <li>所涉及的 AI 提供商（DeepSeek）</li>
+                    <li>处理目的</li>
+                </ul>
+                <p>用户必须明确同意后才会传输任何数据。用户可以拒绝使用 AI，并继续使用应用的非 AI 功能。</p>
+                <p>AI 生成的内容仅供辅助参考。用户有责任在提交前审核和验证所有 AI 生成的内容。</p>
 
-<footer>&copy; 2026 Jture AI. All Rights Reserved.</footer>
+                <h2>3. 应用内浏览器与表单辅助</h2>
+                <p>Jture 包含应用内浏览器，帮助用户管理求职申请。</p>
+                <p>表单辅助功能仅基于用户提供的简历数据运行，不会访问登录凭据、密码或认证字段。Jture 不会收集或存储第三方网站的凭据。</p>
 
-<script>
-    function updateLang(lang) {
-        document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('active'));
-        const target = document.getElementById(lang);
-        if (target) target.classList.add('active');
-    }
+                <h2>4. 数据范围</h2>
+                <p>根据用户操作，Jture 可能处理：</p>
+                <ul>
+                    <li>用户提供的简历内容</li>
+                    <li>职位描述文本</li>
+                    <li>申请追踪元数据</li>
+                    <li>功能所需的应用使用数据</li>
+                </ul>
 
-    window.onload = () => {
-        const browserLang = navigator.language.split('-')[0];
-        const supported = ['zh', 'en', 'ja', 'ko', 'es', 'fr', 'de', 'pt'];
-        const finalLang = supported.includes(browserLang) ? browserLang : 'en';
-        document.getElementById('langPicker').value = finalLang;
-        updateLang(finalLang);
-    };
-</script>
+                <h2>5. 用户控制</h2>
+                <p>用户可以：</p>
+                <ul>
+                    <li>随时删除本地数据</li>
+                    <li>禁用 AI 功能</li>
+                    <li>通过系统设置控制 iCloud 同步</li>
+                </ul>
 
+                <h2>6. 联系方式</h2>
+                <p>如果您对本隐私政策有任何疑问，请联系：</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+            <!-- Traditional Chinese -->
+            <div class="lang-content" data-lang="zh-TW">
+                <h2>1. 資料處理原則</h2>
+                <p>Jture 採用隱私優先的架構設計。使用者的履歷資料和求職申請資訊儲存在使用者裝置本機，如果使用者啟用，也可透過 iCloud 同步。我們不會在自己的伺服器上持久儲存個人資料。</p>
+
+                <h2>2. AI 服務與使用者同意</h2>
+                <p>Jture 中的某些功能由 DeepSeek AI 提供支援。</p>
+                <p>僅當使用者明確啟動 AI 功能（如職位描述分析或表單輔助）時，才會進行 AI 處理。在首次 AI 請求之前，使用者將被明確告知：</p>
+                <ul>
+                    <li>傳送的資料內容</li>
+                    <li>所涉及的 AI 提供商（DeepSeek）</li>
+                    <li>處理目的</li>
+                </ul>
+                <p>使用者必須明確同意後才會傳輸任何資料。使用者可以拒絕使用 AI，並繼續使用應用程式的非 AI 功能。</p>
+                <p>AI 生成的內容僅供輔助參考。使用者有責任在提交前審核和驗證所有 AI 生成的內容。</p>
+
+                <h2>3. 應用程式內瀏覽器與表單輔助</h2>
+                <p>Jture 包含應用程式內瀏覽器，幫助使用者管理求職申請。</p>
+                <p>表單輔助功能僅基於使用者提供的履歷資料運行，不會存取登入憑證、密碼或認證欄位。Jture 不會收集或儲存第三方網站的憑證。</p>
+
+                <h2>4. 資料範圍</h2>
+                <p>根據使用者操作，Jture 可能處理：</p>
+                <ul>
+                    <li>使用者提供的履歷內容</li>
+                    <li>職位描述文字</li>
+                    <li>申請追蹤中繼資料</li>
+                    <li>功能所需的應用程式使用資料</li>
+                </ul>
+
+                <h2>5. 使用者控制</h2>
+                <p>使用者可以：</p>
+                <ul>
+                    <li>隨時刪除本機資料</li>
+                    <li>停用 AI 功能</li>
+                    <li>透過系統設定控制 iCloud 同步</li>
+                </ul>
+
+                <h2>6. 聯絡方式</h2>
+                <p>如果您對本隱私政策有任何疑問，請聯絡：</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+            <!-- Japanese -->
+            <div class="lang-content" data-lang="ja">
+                <h2>1. データ処理の原則</h2>
+                <p>Jture はプライバシーファーストのアーキテクチャで設計されています。ユーザーの履歴書データと求職申請情報は、ユーザーのデバイスにローカルで保存され、ユーザーが有効にした場合は iCloud 経由で同期されます。当社は自社サーバーに個人データを永続的に保存しません。</p>
+
+                <h2>2. AI サービスとユーザーの同意</h2>
+                <p>Jture の一部の機能は DeepSeek AI によって提供されています。</p>
+                <p>AI 処理は、ユーザーが明示的に AI 機能（求人情報の分析やフォーム入力支援など）を開始した場合にのみ行われます。最初の AI リクエストの前に、ユーザーには以下について明確に通知されます：</p>
+                <ul>
+                    <li>送信されるデータの内容</li>
+                    <li>関係する AI プロバイダー（DeepSeek）</li>
+                    <li>処理の目的</li>
+                </ul>
+                <p>データが送信される前に、ユーザーは明示的に同意する必要があります。ユーザーは AI の使用を拒否し、アプリの非 AI 機能を引き続き使用できます。</p>
+                <p>AI が生成したコンテンツは支援目的のみで提供されます。ユーザーは提出前にすべての AI 生成コンテンツを確認・検証する責任があります。</p>
+
+                <h2>3. アプリ内ブラウザとフォーム入力支援</h2>
+                <p>Jture には、ユーザーが求職申請を管理するためのアプリ内ブラウザが含まれています。</p>
+                <p>フォーム入力支援は、ユーザーが提供した履歴書データのみに基づいて動作し、ログイン認証情報、パスワード、または認証フィールドにはアクセスしません。Jture はサードパーティウェブサイトの認証情報を収集または保存しません。</p>
+
+                <h2>4. データの範囲</h2>
+                <p>ユーザーの操作に応じて、Jture は以下を処理する場合があります：</p>
+                <ul>
+                    <li>ユーザーが提供した履歴書の内容</li>
+                    <li>求人情報のテキスト</li>
+                    <li>応募追跡メタデータ</li>
+                    <li>機能に必要なアプリ使用データ</li>
+                </ul>
+
+                <h2>5. ユーザーコントロール</h2>
+                <p>ユーザーは以下のことができます：</p>
+                <ul>
+                    <li>いつでもローカルデータを削除する</li>
+                    <li>AI 機能を無効にする</li>
+                    <li>システム設定から iCloud 同期を制御する</li>
+                </ul>
+
+                <h2>6. お問い合わせ</h2>
+                <p>本プライバシーポリシーについてご質問がある場合は、以下までご連絡ください：</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+            <!-- Korean -->
+            <div class="lang-content" data-lang="ko">
+                <h2>1. 데이터 처리 원칙</h2>
+                <p>Jture는 개인정보 보호를 최우선으로 하는 아키텍처로 설계되었습니다. 사용자의 이력서 데이터와 구직 지원 정보는 사용자의 기기에 로컬로 저장되며, 사용자가 활성화한 경우 iCloud를 통해 동기화됩니다. 당사는 자체 서버에 개인 데이터를 영구적으로 저장하지 않습니다.</p>
+
+                <h2>2. AI 서비스 및 사용자 동의</h2>
+                <p>Jture의 일부 기능은 DeepSeek AI로 구동됩니다.</p>
+                <p>AI 처리는 사용자가 명시적으로 AI 기능(채용공고 분석 또는 양식 지원 등)을 시작할 때만 수행됩니다. 첫 번째 AI 요청 전에 사용자에게 다음 사항이 명확히 안내됩니다:</p>
+                <ul>
+                    <li>전송되는 데이터 내용</li>
+                    <li>관련 AI 제공업체(DeepSeek)</li>
+                    <li>처리 목적</li>
+                </ul>
+                <p>데이터가 전송되기 전에 사용자는 명시적으로 동의해야 합니다. 사용자는 AI 사용을 거부하고 앱의 비 AI 기능을 계속 사용할 수 있습니다.</p>
+                <p>AI가 생성한 콘텐츠는 지원 목적으로만 제공됩니다. 사용자는 제출 전에 모든 AI 생성 결과물을 검토하고 확인할 책임이 있습니다.</p>
+
+                <h2>3. 앱 내 브라우저 및 양식 지원</h2>
+                <p>Jture에는 사용자가 구직 지원을 관리할 수 있도록 앱 내 브라우저가 포함되어 있습니다.</p>
+                <p>양식 지원은 사용자가 제공한 이력서 데이터에서만 작동하며 로그인 자격 증명, 비밀번호 또는 인증 필드에 접근하지 않습니다. Jture는 타사 웹사이트의 자격 증명을 수집하거나 저장하지 않습니다.</p>
+
+                <h2>4. 데이터 범위</h2>
+                <p>사용자 작업에 따라 Jture는 다음을 처리할 수 있습니다:</p>
+                <ul>
+                    <li>사용자가 제공한 이력서 내용</li>
+                    <li>채용공고 텍스트</li>
+                    <li>지원 추적 메타데이터</li>
+                    <li>기능에 필요한 앱 사용 데이터</li>
+                </ul>
+
+                <h2>5. 사용자 제어</h2>
+                <p>사용자는 다음을 수행할 수 있습니다:</p>
+                <ul>
+                    <li>언제든지 로컬 데이터 삭제</li>
+                    <li>AI 기능 비활성화</li>
+                    <li>시스템 설정을 통한 iCloud 동기화 제어</li>
+                </ul>
+
+                <h2>6. 연락처</h2>
+                <p>본 개인정보 처리방침에 대해 질문이 있으시면 다음으로 연락해 주세요:</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+            <!-- Spanish -->
+            <div class="lang-content" data-lang="es">
+                <h2>1. Principios de Procesamiento de Datos</h2>
+                <p>Jture está diseñado con una arquitectura que prioriza la privacidad. Los datos del currículum del usuario y la información de solicitudes de empleo se almacenan localmente en el dispositivo del usuario y, si el usuario lo habilita, se sincronizan a través de iCloud. No almacenamos datos personales de forma permanente en nuestros propios servidores.</p>
+
+                <h2>2. Servicios de IA y Consentimiento del Usuario</h2>
+                <p>Ciertas funciones de Jture están impulsadas por DeepSeek AI.</p>
+                <p>El procesamiento de IA ocurre solo cuando el usuario inicia explícitamente una función de IA (como análisis de descripción de trabajo o asistencia de formularios). Antes de la primera solicitud de IA, los usuarios son informados claramente sobre:</p>
+                <ul>
+                    <li>Qué datos se envían</li>
+                    <li>El proveedor de IA involucrado (DeepSeek)</li>
+                    <li>El propósito del procesamiento</li>
+                </ul>
+                <p>Los usuarios deben dar su consentimiento explícito antes de que se transmitan datos. Los usuarios pueden rechazar el uso de IA y continuar usando las funciones no relacionadas con IA de la aplicación.</p>
+                <p>El contenido generado por IA se proporciona solo como asistencia. Los usuarios son responsables de revisar y verificar todos los resultados generados por IA antes de enviarlos.</p>
+
+                <h2>3. Navegador Integrado y Asistencia de Formularios</h2>
+                <p>Jture incluye un navegador integrado para ayudar a los usuarios a gestionar sus solicitudes de empleo.</p>
+                <p>La asistencia de formularios opera solo con los datos del currículum proporcionados por el usuario y no accede a credenciales de inicio de sesión, contraseñas o campos de autenticación. Jture no recopila ni almacena credenciales de sitios web de terceros.</p>
+
+                <h2>4. Alcance de los Datos</h2>
+                <p>Dependiendo de las acciones del usuario, Jture puede procesar:</p>
+                <ul>
+                    <li>Contenido del currículum proporcionado por el usuario</li>
+                    <li>Texto de descripción del puesto</li>
+                    <li>Metadatos de seguimiento de solicitudes</li>
+                    <li>Datos de uso de la aplicación necesarios para su funcionamiento</li>
+                </ul>
+
+                <h2>5. Control del Usuario</h2>
+                <p>Los usuarios pueden:</p>
+                <ul>
+                    <li>Eliminar datos locales en cualquier momento</li>
+                    <li>Desactivar las funciones de IA</li>
+                    <li>Controlar la sincronización de iCloud a través de la configuración del sistema</li>
+                </ul>
+
+                <h2>6. Contacto</h2>
+                <p>Si tiene alguna pregunta sobre esta Política de Privacidad, por favor contacte:</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+            <!-- French -->
+            <div class="lang-content" data-lang="fr">
+                <h2>1. Principes de Traitement des Données</h2>
+                <p>Jture est conçu avec une architecture axée sur la confidentialité. Les données de CV de l'utilisateur et les informations de candidature sont stockées localement sur l'appareil de l'utilisateur et, si l'utilisateur l'active, synchronisées via iCloud. Nous ne stockons pas de données personnelles de manière permanente sur nos propres serveurs.</p>
+
+                <h2>2. Services d'IA et Consentement de l'Utilisateur</h2>
+                <p>Certaines fonctionnalités de Jture sont alimentées par DeepSeek AI.</p>
+                <p>Le traitement par IA n'a lieu que lorsque l'utilisateur lance explicitement une fonctionnalité d'IA (comme l'analyse de description de poste ou l'assistance aux formulaires). Avant la première demande d'IA, les utilisateurs sont clairement informés de :</p>
+                <ul>
+                    <li>Quelles données sont envoyées</li>
+                    <li>Le fournisseur d'IA impliqué (DeepSeek)</li>
+                    <li>Le but du traitement</li>
+                </ul>
+                <p>Les utilisateurs doivent donner leur consentement explicite avant toute transmission de données. Les utilisateurs peuvent refuser l'utilisation de l'IA et continuer à utiliser les fonctionnalités non-IA de l'application.</p>
+                <p>Le contenu généré par l'IA est fourni uniquement à titre d'assistance. Les utilisateurs sont responsables de la révision et de la vérification de tous les résultats générés par l'IA avant soumission.</p>
+
+                <h2>3. Navigateur Intégré et Assistance aux Formulaires</h2>
+                <p>Jture comprend un navigateur intégré pour aider les utilisateurs à gérer leurs candidatures.</p>
+                <p>L'assistance aux formulaires fonctionne uniquement sur les données de CV fournies par l'utilisateur et n'accède pas aux identifiants de connexion, mots de passe ou champs d'authentification. Jture ne collecte ni ne stocke les identifiants des sites web tiers.</p>
+
+                <h2>4. Portée des Données</h2>
+                <p>Selon les actions de l'utilisateur, Jture peut traiter :</p>
+                <ul>
+                    <li>Le contenu du CV fourni par l'utilisateur</li>
+                    <li>Le texte de description du poste</li>
+                    <li>Les métadonnées de suivi des candidatures</li>
+                    <li>Les données d'utilisation de l'application nécessaires au fonctionnement</li>
+                </ul>
+
+                <h2>5. Contrôle de l'Utilisateur</h2>
+                <p>Les utilisateurs peuvent :</p>
+                <ul>
+                    <li>Supprimer les données locales à tout moment</li>
+                    <li>Désactiver les fonctionnalités d'IA</li>
+                    <li>Contrôler la synchronisation iCloud via les paramètres système</li>
+                </ul>
+
+                <h2>6. Contact</h2>
+                <p>Si vous avez des questions concernant cette Politique de Confidentialité, veuillez contacter :</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+            <!-- German -->
+            <div class="lang-content" data-lang="de">
+                <h2>1. Grundsätze der Datenverarbeitung</h2>
+                <p>Jture wurde mit einer datenschutzorientierten Architektur entwickelt. Lebenslaufdaten und Bewerbungsinformationen der Benutzer werden lokal auf dem Gerät des Benutzers gespeichert und, falls vom Benutzer aktiviert, über iCloud synchronisiert. Wir speichern keine persönlichen Daten dauerhaft auf unseren eigenen Servern.</p>
+
+                <h2>2. KI-Dienste und Benutzereinwilligung</h2>
+                <p>Bestimmte Funktionen in Jture werden von DeepSeek AI betrieben.</p>
+                <p>Die KI-Verarbeitung erfolgt nur, wenn der Benutzer ausdrücklich eine KI-Funktion initiiert (wie Stellenbeschreibungsanalyse oder Formularhilfe). Vor der ersten KI-Anfrage werden die Benutzer klar informiert über:</p>
+                <ul>
+                    <li>Welche Daten gesendet werden</li>
+                    <li>Den beteiligten KI-Anbieter (DeepSeek)</li>
+                    <li>Den Zweck der Verarbeitung</li>
+                </ul>
+                <p>Benutzer müssen ausdrücklich zustimmen, bevor Daten übertragen werden. Benutzer können die KI-Nutzung ablehnen und die Nicht-KI-Funktionen der App weiterhin nutzen.</p>
+                <p>KI-generierte Inhalte werden nur zur Unterstützung bereitgestellt. Benutzer sind dafür verantwortlich, alle KI-generierten Ausgaben vor der Einreichung zu überprüfen und zu verifizieren.</p>
+
+                <h2>3. In-App-Browser und Formularhilfe</h2>
+                <p>Jture enthält einen In-App-Browser, um Benutzern bei der Verwaltung ihrer Bewerbungen zu helfen.</p>
+                <p>Die Formularhilfe arbeitet nur mit vom Benutzer bereitgestellten Lebenslaufdaten und greift nicht auf Anmeldedaten, Passwörter oder Authentifizierungsfelder zu. Jture sammelt oder speichert keine Anmeldedaten für Websites Dritter.</p>
+
+                <h2>4. Datenumfang</h2>
+                <p>Je nach Benutzeraktionen kann Jture folgendes verarbeiten:</p>
+                <ul>
+                    <li>Vom Benutzer bereitgestellte Lebenslaufinhalte</li>
+                    <li>Stellenbeschreibungstext</li>
+                    <li>Bewerbungsverfolgungsmetadaten</li>
+                    <li>Für die Funktionalität erforderliche App-Nutzungsdaten</li>
+                </ul>
+
+                <h2>5. Benutzerkontrolle</h2>
+                <p>Benutzer können:</p>
+                <ul>
+                    <li>Lokale Daten jederzeit löschen</li>
+                    <li>KI-Funktionen deaktivieren</li>
+                    <li>iCloud-Synchronisierung über Systemeinstellungen steuern</li>
+                </ul>
+
+                <h2>6. Kontakt</h2>
+                <p>Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben, kontaktieren Sie bitte:</p>
+                <p><a href="mailto:jturehelp@gmail.com" class="contact-email">📧 jturehelp@gmail.com</a></p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 Jture. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const langContents = document.querySelectorAll('.lang-content');
+
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+
+                    // Update buttons
+                    langBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update content
+                    langContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.dataset.lang === lang) {
+                            content.classList.add('active');
+                        }
+                    });
+
+                    // Update HTML lang attribute
+                    document.documentElement.lang = lang;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
