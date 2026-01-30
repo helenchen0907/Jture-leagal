@@ -6,49 +6,126 @@
     <title>Privacy Policy - Jture AI</title>
     <style>
         :root { --primary: #007AFF; --bg: #F5F5F7; --text: #1D1D1F; --secondary: #86868B; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-        .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
-        .lang-switcher { margin-bottom: 24px; text-align: right; }
-        select { padding: 10px 16px; border-radius: 12px; border: 1px solid #d2d2d7; background: #fff; font-size: 14px; cursor: pointer; outline: none; transition: border 0.3s; }
-        select:hover { border-color: var(--primary); }
-        .content-section { display: none; animation: fadeIn 0.4s ease; }
-        .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        h1 { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
-        .date { color: var(--secondary); font-size: 14px; margin-bottom: 32px; }
-        h2 { font-size: 20px; margin-top: 36px; color: var(--text); font-weight: 600; }
-        p, li { font-size: 16px; color: #424245; }
-        footer { text-align: center; margin-top: 50px; color: var(--secondary); font-size: 13px; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.6; }
+        .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .lang-control { margin-bottom: 24px; text-align: right; }
+        select { padding: 10px; border-radius: 10px; border: 1px solid #d2d2d7; outline: none; cursor: pointer; }
+        .lang-content { display: none; animation: fadeIn 0.3s ease; }
+        .lang-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        h2 { font-size: 20px; margin-top: 30px; color: var(--primary); }
+        .date { color: var(--secondary); font-size: 14px; margin-bottom: 20px; }
+        .contact { background: #f9f9fb; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #eee; }
+        footer { text-align: center; margin-top: 40px; color: var(--secondary); font-size: 12px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="lang-switcher">
-            <select id="langSelect" onchange="switchLang(this.value)">
-                <option value="zh">简体中文</option>
-                <option value="en">English</option>
-                <option value="ja">日本語</option>
-                <option value="ko">한국어</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-                <option value="pt">Português</option>
-            </select>
-        </div>
 
-        <div id="zh" class="content-section active">
-            <h1>隐私政策</h1>
-            <div class="date">最后更新日期：2026年1月30日</div>
-            <h2>1. 数据处理原则</h2>
-            <p>Jture 采用 Serverless 架构。您的简历和职位数据存储在设备本地及 <strong>iCloud</strong> 中。我们不运行中央服务器来存储您的私人信息。</p>
-            <h2>2. AI 服务声明</h2>
-            <p>AI 功能由 <strong>DeepSeek AI</strong> 提供支持。您的数据仅在处理时瞬时传输，不会在云端持久化存储。</p>
-        </div>
+<div class="container">
+    <div class="lang-control">
+        <select id="langPicker" onchange="updateLang(this.value)">
+            <option value="zh">简体中文</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="pt">Português</option>
+        </select>
+    </div>
 
-        <div id="en" class="content-section">
-            <h1>Privacy Policy</h1>
-            <div class="date">Last Updated: January 30, 2026</div>
-            <h2>1. Data Principles</h2>
-            <p>Jture uses a Serverless architecture. Your resume and application data are stored locally and synced via <strong>iCloud</strong>. No central servers store your private data.</p>
-            <h2>2. AI Services</h2>
-            <p>AI features are powered by <strong>DeepSeek AI</strong>. Data is transmitted momentarily for processing and is
+    <div id="zh" class="lang-content active">
+        <h1>隐私政策</h1>
+        <div class="date">更新日期：2026年1月30日</div>
+        <h2>1. 数据处理</h2>
+        <p>Jture 采用 Serverless 架构。您的数据存储在设备本地及 iCloud 中。AI 功能由 DeepSeek 支持。</p>
+        <h2>2. 安全承诺</h2>
+        <p>内置浏览器严禁访问登录凭据及密码。AI 仅处理您主动发送的文本。</p>
+        <div class="contact">联系我们: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="en" class="lang-content">
+        <h1>Privacy Policy</h1>
+        <div class="date">Updated: Jan 30, 2026</div>
+        <h2>1. Data Processing</h2>
+        <p>Jture uses a Serverless architecture. Data is stored locally and on iCloud. AI is powered by DeepSeek.</p>
+        <h2>2. Security</h2>
+        <p>The in-app browser never accesses passwords. AI only processes data with your explicit consent.</p>
+        <div class="contact">Contact: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="ja" class="lang-content">
+        <h1>プライバシーポリシー</h1>
+        <div class="date">更新日：2026年1月30日</div>
+        <h2>1. データ処理</h2>
+        <p>Jtureはサーバーレスアーキテクチャを採用しています。データはローカルおよびiCloudに保存されます。</p>
+        <h2>2. セキュリティ</h2>
+        <p>ブラウザ機能はパスワードにアクセスしません。AI処理にはユーザーの同意が必要です。</p>
+        <div class="contact">お問い合わせ: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="ko" class="lang-content">
+        <h1>개인정보 처리방침</h1>
+        <div class="date">업데이트: 2026년 1월 30일</div>
+        <h2>1. 데이터 처리</h2>
+        <p>Jture는 서버리스 아키텍처를 사용합니다. 데이터는 로컬 기기 및 iCloud에 저장됩니다.</p>
+        <h2>2. 보안</h2>
+        <p>인앱 브라우저는 비밀번호에 접근하지 않습니다. AI는 사용자의 명시적 동의 하에만 작동합니다.</p>
+        <div class="contact">문의하기: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="es" class="lang-content">
+        <h1>Política de Privacidad</h1>
+        <div class="date">Actualizado: 30 de enero de 2026</div>
+        <p>Arquitectura sin servidor. Datos en iCloud. IA impulsada por DeepSeek. No accedemos a sus contraseñas.</p>
+        <div class="contact">Contacto: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="fr" class="lang-content">
+        <h1>Politique de Confidentialité</h1>
+        <div class="date">Mis à jour: 30 Janvier 2026</div>
+        <p>Architecture Serverless. Données sur iCloud. IA par DeepSeek. Pas d'accès aux mots de passe.</p>
+        <div class="contact">Contact: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="de" class="lang-content">
+        <h1>Datenschutzerklärung</h1>
+        <div class="date">Aktualisiert: 30. Januar 2026</div>
+        <p>Serverlose Architektur. Daten in iCloud. KI von DeepSeek. Kein Zugriff auf Passwörter.</p>
+        <div class="contact">Kontakt: jturehelp@gmail.com</div>
+    </div>
+
+    <div id="pt" class="lang-content">
+        <h1>Política de Privacidade</h1>
+        <div class="date">Atualizado: 30 de janeiro de 2026</div>
+        <p>Arquitetura Serverless. Dados no iCloud. IA do DeepSeek. Sem acesso a senhas.</p>
+        <div class="contact">Contato: jturehelp@gmail.com</div>
+    </div>
+
+</div>
+
+<footer>&copy; 2026 Jture AI. All Rights Reserved.</footer>
+
+<script>
+    function updateLang(lang) {
+        // 隐藏所有内容
+        document.querySelectorAll('.lang-content').forEach(el => el.classList.remove('active'));
+        // 显示选中的语言内容
+        const target = document.getElementById(lang);
+        if (target) target.classList.add('active');
+    }
+
+    // 自动检测浏览器语言并初始化
+    window.onload = () => {
+        const browserLang = navigator.language.split('-')[0];
+        const supported = ['zh', 'en', 'ja', 'ko', 'es', 'fr', 'de', 'pt'];
+        const finalLang = supported.includes(browserLang) ? browserLang : 'en';
+        document.getElementById('langPicker').value = finalLang;
+        updateLang(finalLang);
+    };
+</script>
+
+</body>
+</html>
