@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jture App Support</title>
+    <style>
+        body {
+            /* 页面背景：非常柔和的浅蓝色 */
+            background-color: #eaf4ff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            /* 中心卡片：纯白色 */
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.1); /* 淡淡的蓝色阴影 */
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: #5a6b7c;
+            line-height: 1.6;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .contact-btn {
+            /* 按钮：深一点的蓝色，吸引点击 */
+            display: inline-block;
+            background-color: #007aff;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: opacity 0.2s;
+        }
+
+        .contact-btn:hover {
+            opacity: 0.9;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #a0a0a0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div style="font-size: 40px; margin-bottom: 20px;">📘</div>
+
+        <h1>Contact Support</h1>
+        
+        <p>
+            Thank you for using Jture. <br>
+            If you have any questions or feedback, please contact us directly.
+        </p>
+
+        <a href="mailto:jturehelp@gmail.com" class="contact-btn">
+            jturehelp@gmail.com
+        </a>
+
+        <div class="footer">
+            &copy; 2026 Jture Team. All rights reserved.
+        </div>
+    </div>
+
+</body>
+</html>
