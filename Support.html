@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jture - Contact Us</title>
+    <title>Jture - Support</title>
     <style>
         * {
             margin: 0;
@@ -22,6 +22,38 @@
             padding: 2rem;
         }
 
+        .lang-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .lang-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: #1e293b;
+        }
+
+        .lang-btn:hover {
+            border-color: #0ea5e9;
+            color: #0ea5e9;
+        }
+
+        .lang-btn.active {
+            background: #0ea5e9;
+            border-color: #0ea5e9;
+            color: white;
+        }
+
         .container {
             background: white;
             border-radius: 1.5rem;
@@ -37,6 +69,14 @@
             font-weight: 700;
             color: #0ea5e9;
             margin-bottom: 0.5rem;
+        }
+
+        .lang-content {
+            display: none;
+        }
+
+        .lang-content.active {
+            display: block;
         }
 
         .tagline {
@@ -99,21 +139,113 @@
                 padding: 0.875rem 1.5rem;
                 font-size: 1rem;
             }
+
+            .lang-btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
+    <nav class="lang-selector">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="zh-CN">简体中文</button>
+        <button class="lang-btn" data-lang="zh-TW">繁體中文</button>
+        <button class="lang-btn" data-lang="ja">日本語</button>
+        <button class="lang-btn" data-lang="ko">한국어</button>
+        <button class="lang-btn" data-lang="es">Español</button>
+        <button class="lang-btn" data-lang="fr">Français</button>
+        <button class="lang-btn" data-lang="de">Deutsch</button>
+    </nav>
+
     <div class="container">
         <div class="logo">Jture</div>
-        <p class="tagline">AI-Powered Job Application Assistant</p>
-        <p class="message">If you have any questions, feedback, or need assistance, please feel free to contact us.</p>
+
+        <!-- English -->
+        <div class="lang-content active" data-lang="en">
+            <p class="tagline">AI-Powered Job Application Assistant</p>
+            <p class="message">If you have any questions, feedback, or need assistance, please feel free to contact us.</p>
+        </div>
+
+        <!-- Simplified Chinese -->
+        <div class="lang-content" data-lang="zh-CN">
+            <p class="tagline">AI 驱动的求职申请助手</p>
+            <p class="message">如果您有任何问题、反馈或需要帮助，请随时与我们联系。</p>
+        </div>
+
+        <!-- Traditional Chinese -->
+        <div class="lang-content" data-lang="zh-TW">
+            <p class="tagline">AI 驅動的求職申請助手</p>
+            <p class="message">如果您有任何問題、反饋或需要幫助，請隨時與我們聯繫。</p>
+        </div>
+
+        <!-- Japanese -->
+        <div class="lang-content" data-lang="ja">
+            <p class="tagline">AI搭載の求職申請アシスタント</p>
+            <p class="message">ご質問、ご意見、またはサポートが必要な場合は、お気軽にお問い合わせください。</p>
+        </div>
+
+        <!-- Korean -->
+        <div class="lang-content" data-lang="ko">
+            <p class="tagline">AI 기반 구직 지원 어시스턴트</p>
+            <p class="message">질문, 피드백 또는 도움이 필요하시면 언제든지 연락해 주세요.</p>
+        </div>
+
+        <!-- Spanish -->
+        <div class="lang-content" data-lang="es">
+            <p class="tagline">Asistente de Solicitud de Empleo con IA</p>
+            <p class="message">Si tiene alguna pregunta, comentario o necesita asistencia, no dude en contactarnos.</p>
+        </div>
+
+        <!-- French -->
+        <div class="lang-content" data-lang="fr">
+            <p class="tagline">Assistant de Candidature Propulsé par l'IA</p>
+            <p class="message">Si vous avez des questions, des commentaires ou besoin d'aide, n'hésitez pas à nous contacter.</p>
+        </div>
+
+        <!-- German -->
+        <div class="lang-content" data-lang="de">
+            <p class="tagline">KI-gestützter Bewerbungsassistent</p>
+            <p class="message">Wenn Sie Fragen, Feedback oder Hilfe benötigen, kontaktieren Sie uns bitte.</p>
+        </div>
+
         <a href="mailto:jturehelp@gmail.com" class="email-link">
             📧 jturehelp@gmail.com
         </a>
+
         <div class="footer">
             <p>© 2026 Jture. All rights reserved.</p>
             <p><a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2026011344号-1A</a></p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const langBtns = document.querySelectorAll('.lang-btn');
+            const langContents = document.querySelectorAll('.lang-content');
+
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+
+                    // Update buttons
+                    langBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Update content
+                    langContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.dataset.lang === lang) {
+                            content.classList.add('active');
+                        }
+                    });
+
+                    // Update HTML lang attribute
+                    document.documentElement.lang = lang;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
