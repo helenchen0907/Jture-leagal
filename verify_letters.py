@@ -55,6 +55,16 @@ FIELD_KIND = {
 
 RED_FILL = PatternFill(start_color="FFFFC7CE", end_color="FFFFC7CE", fill_type="solid")
 YELLOW_FILL = PatternFill(start_color="FFFFEB9C", end_color="FFFFEB9C", fill_type="solid")
+ORANGE_FILL = PatternFill(start_color="FFFFD580", end_color="FFFFD580", fill_type="solid")
+
+
+# 期望的粗体状态：True = SGD 应粗体；False = 不应粗体；不在表里则不检查粗体
+BOLD_EXPECTED = {
+    "pod_amount": False,
+    "first_div": False,
+    "admitted": True,
+    "final_div": True,
+}
 
 
 # ---------- 归一化 ----------
@@ -134,6 +144,56 @@ def read_pdf_text(pdf_path: Path) -> str:
     text = "\n".join(page.get_text("text") for page in doc)
     doc.close()
     return text
+
+
+def _is_span_bold(span: dict) -> bool:
+    """判断 PyMuPDF 的 span 是否粗体。"""
+    flags = span.get("flags", 0)
+    if flags & 16:  # PyMuPDF flag bit 4 = bold
+        return True
+    font = span.get("font", "").lower()
+    return any(tag in font for tag in ("bold", "black", "heavy"))
+
+
+def get_amount_bold_map(pdf_path: Path) -> dict[str, bool]:
+    """扫 PDF 里所有 'SGD XXX' 形式的金额，返回 {归一化金额: 是否粗体}。
+
+    同一金额出现多次时，只要任意一次是粗体就记为粗体（按需可改）。
+    """
+    result: dict[str, bool] = {}
+    doc = fitz.open(str(pdf_path))
+    try:
+        for page in doc:
+            data = page.get_text("dict")
+            for block in data.get("blocks", []):
+                if block.get("type") != 0:
+                    continue
+                for line in block.get("lines", []):
+                    spans = line.get("spans", [])
+                    if not spans:
+                        continue
+                    line_text = "".join(s.get("text", "") for s in spans)
+                    for m in re.finditer(r"SGD\s*([\d,]+\.\d{2})", line_text):
+                        amount = m.group(1)
+                        start, end = m.span(0)  # 包含 "SGD" 整段
+                        # 找跟 [start, end) 区间有交集的 span
+                        is_bold = False
+                        cursor = 0
+                        for s in spans:
+                            s_text = s.get("text", "")
+                            s_start = cursor
+                            s_end = cursor + len(s_text)
+                            cursor = s_end
+                            if s_end > start and s_start < end:
+                                if _is_span_bold(s):
+                                    is_bold = True
+                                    break
+                        norm = norm_amount(amount)
+                        # 多次出现：取 OR（任意一次粗体就算粗体）
+                        result[norm] = result.get(norm, False) or is_bold
+    finally:
+        doc.close()
+    return result
 
 
 AMOUNT_RE = r"(?:SGD|S\$)?\s*([\d,]+\.\d{2})"
@@ -259,6 +319,7 @@ def main() -> None:
     pdf_missing = 0
     rows_with_mismatch = 0
     field_mismatches: dict[str, int] = {}
+    bold_mismatches: dict[str, int] = {}
 
     for row in ws.iter_rows(min_row=2):
         total += 1
@@ -276,21 +337,42 @@ def main() -> None:
 
         pdf_text = read_pdf_text(pdf_path)
         pdf_fields = extract_fields_from_pdf(pdf_text, excel_name)
+        bold_map = get_amount_bold_map(pdf_path)
 
-        row_mismatch = False
+        row_status = []  # 收集本行的问题
         for key, col in col_idx.items():
             excel_val = row[col - 1].value
             pdf_val = pdf_fields.get(key, "")
             kind = FIELD_KIND[key]
-            if normalize(excel_val, kind) != normalize(pdf_val, kind):
-                row[col - 1].fill = RED_FILL
-                # 把 PDF 的值写到批注
-                row[col - 1].comment = _make_comment(pdf_val)
-                field_mismatches[key] = field_mismatches.get(key, 0) + 1
-                row_mismatch = True
+            value_ok = normalize(excel_val, kind) == normalize(pdf_val, kind)
 
-        if row_mismatch:
+            if not value_ok:
+                row[col - 1].fill = RED_FILL
+                row[col - 1].comment = _make_comment(f"PDF: {pdf_val}")
+                field_mismatches[key] = field_mismatches.get(key, 0) + 1
+                row_status.append("MISMATCH")
+                continue
+
+            # 值正确，再看 SGD 粗体（仅对金额字段）
+            if kind == "amount" and key in BOLD_EXPECTED:
+                expected = BOLD_EXPECTED[key]
+                actual = bold_map.get(norm_amount(pdf_val))
+                if actual is None:
+                    continue  # 没在 PDF 找到 SGD 段，跳过粗体检查
+                if actual != expected:
+                    row[col - 1].fill = ORANGE_FILL
+                    row[col - 1].comment = _make_comment(
+                        f"值正确但加粗错误：期望 {'粗体' if expected else '非粗体'}, "
+                        f"实际 {'粗体' if actual else '非粗体'}"
+                    )
+                    bold_mismatches[key] = bold_mismatches.get(key, 0) + 1
+                    row_status.append("BOLD")
+
+        if "MISMATCH" in row_status:
             ws.cell(row=row[0].row, column=status_col, value="MISMATCH").fill = RED_FILL
+            rows_with_mismatch += 1
+        elif "BOLD" in row_status:
+            ws.cell(row=row[0].row, column=status_col, value="BOLD ISSUE").fill = ORANGE_FILL
             rows_with_mismatch += 1
         else:
             ws.cell(row=row[0].row, column=status_col, value="OK")
@@ -303,10 +385,16 @@ def main() -> None:
     print(f"有不匹配字段的记录：{rows_with_mismatch}")
     print(f"完全匹配：{total - pdf_missing - rows_with_mismatch}")
     if field_mismatches:
-        print(f"\n各字段不匹配数：")
+        print(f"\n各字段值不匹配数：")
         for key, cnt in sorted(field_mismatches.items(), key=lambda x: -x[1]):
             print(f"  {EXCEL_COLS[key]}: {cnt}")
+    if bold_mismatches:
+        print(f"\n各字段 SGD 粗体不匹配数：")
+        for key, cnt in sorted(bold_mismatches.items(), key=lambda x: -x[1]):
+            expected = "粗体" if BOLD_EXPECTED[key] else "非粗体"
+            print(f"  {EXCEL_COLS[key]} (应为{expected}): {cnt}")
     print(f"\n报告：{args.out}")
+    print(f"  红色 = 值不匹配 / 橙色 = 值对但 SGD 粗体不对 / 黄色 = PDF 缺失")
 
 
 def _make_comment(pdf_val):
