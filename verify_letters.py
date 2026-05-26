@@ -297,9 +297,14 @@ def main() -> None:
         return
     ws = wb[args.sheet]
 
-    # 找列号（1-based）
+    # 找列号（1-based）。匹配时去掉列头前后空格，避免 "Bank Name " 这种意外。
     header_row = next(ws.iter_rows(min_row=1, max_row=1, values_only=False))
-    header_map = {cell.value: cell.column for cell in header_row}
+    header_map = {}
+    for cell in header_row:
+        if cell.value is None:
+            continue
+        key = str(cell.value).strip()
+        header_map[key] = cell.column
     col_idx: dict[str, int] = {}
     missing_cols: list[str] = []
     for key, col_name in EXCEL_COLS.items():
