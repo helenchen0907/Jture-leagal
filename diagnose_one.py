@@ -16,7 +16,7 @@ from openpyxl import load_workbook
 from verify_letters import (
     EXCEL_COLS, FIELD_KIND, BOLD_EXPECTED,
     safe_filename, read_pdf_text, extract_fields_from_pdf,
-    get_amount_bold_map, norm_amount, normalize,
+    get_field_bold_map, norm_amount, normalize,
 )
 
 
@@ -57,7 +57,7 @@ def main():
 
     pdf_text = read_pdf_text(pdf_path)
     pdf_fields = extract_fields_from_pdf(pdf_text, args.name)
-    bold_map = get_amount_bold_map(pdf_path)
+    bold_map = get_field_bold_map(pdf_path)
 
     print(f"\n========== 对比 {args.name} ==========")
     print(f"PDF 文件：{pdf_path}\n")
@@ -76,22 +76,15 @@ def main():
         print(f"{col_name:<35} {kind:<8} {repr(excel_val)[:33]:<35} "
               f"{repr(pdf_val)[:33]:<35} {e_norm[:18]:<20} {p_norm[:18]:<20} {match}")
 
-    print(f"\n========== Bold 检查 ==========")
+    print(f"\n========== Bold 检查（按 PDF 里 SGD 出现顺序）==========")
     for key, expected in BOLD_EXPECTED.items():
-        if key not in col_idx:
-            continue
-        pdf_val = pdf_fields.get(key, "")
-        actual = bold_map.get(norm_amount(pdf_val))
+        actual = bold_map.get(key)
         if actual is None:
-            print(f"{EXCEL_COLS[key]:<35} 期望={'粗体' if expected else '非粗体'}, 实际=找不到")
+            print(f"{EXCEL_COLS.get(key, key):<35} 期望={'粗体' if expected else '非粗体'}, 实际=找不到")
         else:
             mark = "✓" if actual == expected else "✗"
-            print(f"{EXCEL_COLS[key]:<35} 期望={'粗体' if expected else '非粗体'}, "
+            print(f"{EXCEL_COLS.get(key, key):<35} 期望={'粗体' if expected else '非粗体'}, "
                   f"实际={'粗体' if actual else '非粗体'}  {mark}")
-
-    print(f"\n========== bold_map (PDF 里所有 SGD 金额) ==========")
-    for amt, is_bold in bold_map.items():
-        print(f"  SGD {amt:<15} {'粗体' if is_bold else '非粗体'}")
 
 
 if __name__ == "__main__":
