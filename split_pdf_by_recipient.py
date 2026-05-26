@@ -90,23 +90,36 @@ def safe_filename(name: str) -> str:
     return cleaned or "UNKNOWN"
 
 
-def split_pdf(input_path: Path, output_dir: Path, pages_per_letter: int = 2) -> None:
+def split_pdf(input_path: Path, output_dir: Path, pages_per_letter: int = 2,
+              start_page: int = 1, end_page: int | None = None) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     reader = PdfReader(str(input_path))
     total = len(reader.pages)
 
-    if total % pages_per_letter != 0:
+    # 把 1-based 页码转成 0-based 索引
+    start_idx = max(0, start_page - 1)
+    end_idx = total if end_page is None else min(total, end_page)
+    span = end_idx - start_idx
+
+    if start_idx >= end_idx:
+        print(f"❌ 页码范围无效：start={start_page}, end={end_page}, total={total}")
+        return
+
+    if span % pages_per_letter != 0:
         print(
-            f"⚠ 警告：总页数 {total} 不能被 {pages_per_letter} 整除，"
-            f"最后一封信可能不完整。"
+            f"⚠ 警告：页码范围 {start_page}-{end_idx} 共 {span} 页，"
+            f"不能被 {pages_per_letter} 整除，最后一封信可能不完整。"
         )
+
+    print(f"处理范围：第 {start_idx + 1} 页 - 第 {end_idx} 页（共 {span} 页 / "
+          f"{span // pages_per_letter} 封信）")
 
     used_names: dict[str, int] = {}
     success = 0
     failed: list[int] = []
 
     with pdfplumber.open(str(input_path)) as plumber_pdf:
-        for idx, i in enumerate(range(0, total, pages_per_letter), start=1):
+        for idx, i in enumerate(range(start_idx, end_idx, pages_per_letter), start=1):
             first_page = plumber_pdf.pages[i]
             name = extract_recipient_name(first_page)
 
@@ -123,7 +136,7 @@ def split_pdf(input_path: Path, output_dir: Path, pages_per_letter: int = 2) -> 
 
             writer = PdfWriter()
             for j in range(pages_per_letter):
-                if i + j < total:
+                if i + j < end_idx:
                     writer.add_page(reader.pages[i + j])
 
             with open(out_path, "wb") as f:
@@ -148,12 +161,20 @@ def main() -> None:
         "-n", "--pages", type=int, default=2,
         help="每封信的页数（默认: 2）",
     )
+    parser.add_argument(
+        "--start", type=int, default=1,
+        help="起始页码（1-based，包含；默认 1）",
+    )
+    parser.add_argument(
+        "--end", type=int, default=None,
+        help="结束页码（1-based，包含；默认到最后一页）",
+    )
     args = parser.parse_args()
 
     if not args.input.exists():
         parser.error(f"输入文件不存在：{args.input}")
 
-    split_pdf(args.input, args.output, args.pages)
+    split_pdf(args.input, args.output, args.pages, args.start, args.end)
 
 
 if __name__ == "__main__":
