@@ -313,6 +313,10 @@ def main() -> None:
     parser.add_argument("--pdf-dir", required=True, type=Path, help="PDF 所在文件夹")
     parser.add_argument("--out", default=Path("verification_report.xlsx"), type=Path,
                         help="输出 Excel 报告路径")
+    parser.add_argument("--start-row", type=int, default=2,
+                        help="起始 Excel 行号（1-based，含表头那行是 1；默认 2，即第一条数据）")
+    parser.add_argument("--end-row", type=int, default=None,
+                        help="结束 Excel 行号（含；默认到最后一行）")
     args = parser.parse_args()
 
     if not args.excel.exists():
@@ -358,7 +362,10 @@ def main() -> None:
     field_mismatches: dict[str, int] = {}
     bold_mismatches: dict[str, int] = {}
 
-    for row in ws.iter_rows(min_row=2):
+    end_row = args.end_row or ws.max_row
+    print(f"处理 Excel 行范围：{args.start_row} - {end_row}")
+
+    for row in ws.iter_rows(min_row=args.start_row, max_row=end_row):
         total += 1
         name_cell = row[col_idx["name"] - 1] if "name" in col_idx else None
         if not name_cell or not name_cell.value:
@@ -367,8 +374,8 @@ def main() -> None:
         excel_name = str(name_cell.value).strip()
         pdf_path = args.pdf_dir / f"{safe_filename(excel_name)}.pdf"
 
+        # 没有 PDF 就跳过，不写任何东西到 Issues 列
         if not pdf_path.exists():
-            ws.cell(row=row[0].row, column=status_col, value="PDF missing")
             pdf_missing += 1
             continue
 
@@ -410,10 +417,12 @@ def main() -> None:
     wb.save(args.out)
 
     print(f"\n========== 核对完成 ==========")
-    print(f"总记录：{total}")
-    print(f"PDF 缺失：{pdf_missing}")
-    print(f"有问题的记录：{rows_with_issues}")
-    print(f"完全匹配：{total - pdf_missing - rows_with_issues}")
+    print(f"行范围：{args.start_row} - {end_row}")
+    print(f"范围内总行数：{total}")
+    print(f"没有对应 PDF（跳过）：{pdf_missing}")
+    print(f"实际核对：{total - pdf_missing}")
+    print(f"  有问题的记录：{rows_with_issues}")
+    print(f"  完全匹配：{total - pdf_missing - rows_with_issues}")
     if field_mismatches:
         print(f"\n各字段值不匹配数：")
         for key, cnt in sorted(field_mismatches.items(), key=lambda x: -x[1]):
