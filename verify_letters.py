@@ -19,7 +19,6 @@ from pathlib import Path
 
 import fitz  # PyMuPDF
 from openpyxl import load_workbook
-from openpyxl.styles import PatternFill
 
 
 # Excel 列名 -> 内部 key（如果列名不一样，改这里）
@@ -53,17 +52,28 @@ FIELD_KIND = {
     "bank_account": "digits",
 }
 
-RED_FILL = PatternFill(start_color="FFFFC7CE", end_color="FFFFC7CE", fill_type="solid")
-YELLOW_FILL = PatternFill(start_color="FFFFEB9C", end_color="FFFFEB9C", fill_type="solid")
-ORANGE_FILL = PatternFill(start_color="FFFFD580", end_color="FFFFD580", fill_type="solid")
-
-
 # 期望的粗体状态：True = SGD 应粗体；False = 不应粗体；不在表里则不检查粗体
 BOLD_EXPECTED = {
     "pod_amount": False,
     "first_div": False,
     "admitted": True,
     "final_div": True,
+}
+
+# 问题摘要里用的简称（出现在最后一列）
+ISSUE_LABEL = {
+    "name": "Name in POD",
+    "addr1": "POD address 1",
+    "addr2": "POD address 2",
+    "addr3": "POD address 3",
+    "country": "Country",
+    "pod_date": "POD date",
+    "pod_amount": "POD amount",
+    "first_div": "First Dividend",
+    "admitted": "Admitted amount",
+    "final_div": "Final Dividend",
+    "bank_name": "Bank Name",
+    "bank_account": "Bank Account Number",
 }
 
 
@@ -316,13 +326,13 @@ def main() -> None:
         print(f"⚠ Excel 缺少列（这些字段会跳过）：{missing_cols}")
         print(f"   实际列头：{list(header_map.keys())}")
 
-    # 在末尾加一列 Status
+    # 在末尾加一列：问题摘要
     status_col = ws.max_column + 1
-    ws.cell(row=1, column=status_col, value="Verify Status")
+    ws.cell(row=1, column=status_col, value="Issues")
 
     total = 0
     pdf_missing = 0
-    rows_with_mismatch = 0
+    rows_with_issues = 0
     field_mismatches: dict[str, int] = {}
     bold_mismatches: dict[str, int] = {}
 
@@ -336,7 +346,7 @@ def main() -> None:
         pdf_path = args.pdf_dir / f"{safe_filename(excel_name)}.pdf"
 
         if not pdf_path.exists():
-            ws.cell(row=row[0].row, column=status_col, value="PDF MISSING").fill = YELLOW_FILL
+            ws.cell(row=row[0].row, column=status_col, value="PDF missing")
             pdf_missing += 1
             continue
 
@@ -344,7 +354,7 @@ def main() -> None:
         pdf_fields = extract_fields_from_pdf(pdf_text, excel_name)
         bold_map = get_amount_bold_map(pdf_path)
 
-        row_status = []  # 收集本行的问题
+        issues: list[str] = []
         for key, col in col_idx.items():
             excel_val = row[col - 1].value
             pdf_val = pdf_fields.get(key, "")
@@ -352,10 +362,8 @@ def main() -> None:
             value_ok = normalize(excel_val, kind) == normalize(pdf_val, kind)
 
             if not value_ok:
-                row[col - 1].fill = RED_FILL
-                row[col - 1].comment = _make_comment(f"PDF: {pdf_val}")
+                issues.append(f"{ISSUE_LABEL[key]} mismatch")
                 field_mismatches[key] = field_mismatches.get(key, 0) + 1
-                row_status.append("MISMATCH")
                 continue
 
             # 值正确，再看 SGD 粗体（仅对金额字段）
@@ -363,32 +371,27 @@ def main() -> None:
                 expected = BOLD_EXPECTED[key]
                 actual = bold_map.get(norm_amount(pdf_val))
                 if actual is None:
-                    continue  # 没在 PDF 找到 SGD 段，跳过粗体检查
+                    continue
                 if actual != expected:
-                    row[col - 1].fill = ORANGE_FILL
-                    row[col - 1].comment = _make_comment(
-                        f"值正确但加粗错误：期望 {'粗体' if expected else '非粗体'}, "
-                        f"实际 {'粗体' if actual else '非粗体'}"
-                    )
+                    if expected:
+                        issues.append(f"{ISSUE_LABEL[key]} SGD not bold")
+                    else:
+                        issues.append(f"{ISSUE_LABEL[key]} SGD should not be bold")
                     bold_mismatches[key] = bold_mismatches.get(key, 0) + 1
-                    row_status.append("BOLD")
 
-        if "MISMATCH" in row_status:
-            ws.cell(row=row[0].row, column=status_col, value="MISMATCH").fill = RED_FILL
-            rows_with_mismatch += 1
-        elif "BOLD" in row_status:
-            ws.cell(row=row[0].row, column=status_col, value="BOLD ISSUE").fill = ORANGE_FILL
-            rows_with_mismatch += 1
+        if issues:
+            ws.cell(row=row[0].row, column=status_col, value=", ".join(issues))
+            rows_with_issues += 1
         else:
-            ws.cell(row=row[0].row, column=status_col, value="OK")
+            ws.cell(row=row[0].row, column=status_col, value="-")
 
     wb.save(args.out)
 
     print(f"\n========== 核对完成 ==========")
     print(f"总记录：{total}")
     print(f"PDF 缺失：{pdf_missing}")
-    print(f"有不匹配字段的记录：{rows_with_mismatch}")
-    print(f"完全匹配：{total - pdf_missing - rows_with_mismatch}")
+    print(f"有问题的记录：{rows_with_issues}")
+    print(f"完全匹配：{total - pdf_missing - rows_with_issues}")
     if field_mismatches:
         print(f"\n各字段值不匹配数：")
         for key, cnt in sorted(field_mismatches.items(), key=lambda x: -x[1]):
@@ -399,13 +402,7 @@ def main() -> None:
             expected = "粗体" if BOLD_EXPECTED[key] else "非粗体"
             print(f"  {EXCEL_COLS[key]} (应为{expected}): {cnt}")
     print(f"\n报告：{args.out}")
-    print(f"  红色 = 值不匹配 / 橙色 = 值对但 SGD 粗体不对 / 黄色 = PDF 缺失")
-
-
-def _make_comment(pdf_val):
-    """给单元格加批注，显示 PDF 里读到的值。"""
-    from openpyxl.comments import Comment
-    return Comment(f"PDF: {pdf_val}", "verify")
+    print(f"  最后一列 Issues：'-' 表示全部正确；否则列出每个不匹配字段")
 
 
 if __name__ == "__main__":
