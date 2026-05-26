@@ -88,7 +88,9 @@ def norm_text(v) -> str:
 def norm_digits(v) -> str:
     if v is None:
         return ""
-    return re.sub(r"\D", "", str(v))
+    s = re.sub(r"\D", "", str(v))
+    # 去掉前导零，避免 Excel 存为整数(85460455) vs PDF 字符串(085460455) 不匹配
+    return s.lstrip("0") or ("0" if s else "")
 
 
 def norm_amount(v) -> str:
@@ -214,8 +216,9 @@ def extract_fields_from_pdf(text: str, excel_name: str) -> dict:
     out: dict[str, str] = {}
 
     # POD 日期 + POD 金额（同一句话）
+    # 兼容 Unicode 弯引号 ” “ 和直引号 ' "；POD 和 ) 之间最多 3 个字符
     m = re.search(
-        r'POD["\'"]?\)\s*dated\s+(\d{1,2}\s+\w+\s+\d{4})\s+in\s+the\s+amount\s+of\s+' + AMOUNT_RE,
+        r'POD[^)]{0,3}\)\s*dated\s+(\d{1,2}\s+\w+\s+\d{4})\s+in\s+the\s+amount\s+of\s+' + AMOUNT_RE,
         text, re.IGNORECASE,
     )
     if m:
@@ -301,7 +304,8 @@ def main() -> None:
 
     # 把 Excel 复制一份做报告
     shutil.copy(args.excel, args.out)
-    wb = load_workbook(args.out)
+    # data_only=True：让 VLOOKUP 等公式返回缓存的计算结果，而不是公式字符串
+    wb = load_workbook(args.out, data_only=True)
     if args.sheet not in wb.sheetnames:
         print(f"❌ 工作表 {args.sheet!r} 不存在。可用工作表：{wb.sheetnames}")
         return
