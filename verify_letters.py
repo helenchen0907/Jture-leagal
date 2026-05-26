@@ -168,9 +168,12 @@ def _is_span_bold(span: dict) -> bool:
     return any(tag in font for tag in ("bold", "black", "heavy"))
 
 
-def get_field_bold_map(pdf_path: Path) -> dict[str, bool]:
-    """按 PDF 里 SGD 金额出现的顺序映射到字段，返回 {field_key: is_bold}。"""
-    ordered: list[bool] = []
+def get_amount_bold_map(pdf_path: Path) -> dict[str, bool]:
+    """扫 PDF 里所有 'SGD XXX' 形式的金额，返回 {归一化金额: 是否粗体}。
+
+    同一金额出现多次时，只要任意一次是粗体就记为粗体。
+    """
+    result: dict[str, bool] = {}
     doc = fitz.open(str(pdf_path))
     try:
         for page in doc:
@@ -184,7 +187,8 @@ def get_field_bold_map(pdf_path: Path) -> dict[str, bool]:
                         continue
                     line_text = "".join(s.get("text", "") for s in spans)
                     for m in re.finditer(r"SGD\s*([\d,]+\.\d{2})", line_text):
-                        start, end = m.span(0)  # 包含 "SGD" 整段
+                        amount = m.group(1)
+                        start, end = m.span(0)
                         is_bold = False
                         cursor = 0
                         for s in spans:
@@ -196,41 +200,63 @@ def get_field_bold_map(pdf_path: Path) -> dict[str, bool]:
                                 if _is_span_bold(s):
                                     is_bold = True
                                     break
-                        ordered.append(is_bold)
+                        norm = norm_amount(amount)
+                        result[norm] = result.get(norm, False) or is_bold
     finally:
         doc.close()
-
-    result: dict[str, bool] = {}
-    for i, key in enumerate(AMOUNT_ORDER):
-        if i < len(ordered):
-            result[key] = ordered[i]
     return result
 
 
 AMOUNT_RE = r"(?:SGD|S\$)?\s*([\d,]+\.\d{2})"
 
-# PDF 里 SGD 金额按出现顺序对应的字段
-AMOUNT_ORDER = ["pod_amount", "first_div", "admitted", "final_div"]
-
 
 def extract_fields_from_pdf(text: str, excel_name: str) -> dict:
-    """从 PDF 文本里抽各字段。如果找不到，对应 key 缺失。"""
+    """从 PDF 文本里抽各字段。如果找不到，对应 key 缺失。
+
+    用每个金额所在的固定短语来定位，不依赖 SGD 出现顺序（避免某封信
+    缺一个 SGD 时把后面的全部错位）。
+    """
     out: dict[str, str] = {}
 
-    # 按顺序找所有 "SGD X,XXX.XX" 形式的金额
-    # 第 1 个 = POD amount, 第 2 个 = First Dividend, 第 3 个 = Admitted, 第 4 个 = Final Dividend
-    sgd_amounts = re.findall(r"SGD\s*([\d,]+\.\d{2})", text)
-    for i, key in enumerate(AMOUNT_ORDER):
-        if i < len(sgd_amounts):
-            out[key] = sgd_amounts[i]
-
-    # POD 日期 —— 兼容 Unicode 弯引号 ” 和直引号 "
+    # POD 日期：第一段 "POD") dated 17 July 2025"
     m = re.search(
         r'POD[^)]{0,3}\)\s*dated\s+(\d{1,2}\s+\w+\s+\d{4})',
         text, re.IGNORECASE,
     )
     if m:
         out["pod_date"] = m.group(1)
+
+    # POD amount：第一段 "in the amount of SGD X"
+    m = re.search(
+        r"in\s+the\s+amount\s+of\s+SGD\s*([\d,]+\.\d{2})",
+        text, re.IGNORECASE,
+    )
+    if m:
+        out["pod_amount"] = m.group(1)
+
+    # First Dividend：第二段 "you have been paid SGD X"
+    m = re.search(
+        r"you\s+have\s+been\s+paid\s+SGD\s*([\d,]+\.\d{2})",
+        text, re.IGNORECASE,
+    )
+    if m:
+        out["first_div"] = m.group(1)
+
+    # Admitted amount：第四段 "Amount of your POD admitted: SGD X"
+    m = re.search(
+        r"POD\s+admitted\s*:?\s*SGD\s*([\d,]+\.\d{2})",
+        text, re.IGNORECASE,
+    )
+    if m:
+        out["admitted"] = m.group(1)
+
+    # Final Dividend：第四段 "Final dividend payable to you: SGD X"
+    m = re.search(
+        r"Final\s+dividend\s+payable\s+to\s+you\s*:?\s*SGD\s*([\d,]+\.\d{2})",
+        text, re.IGNORECASE,
+    )
+    if m:
+        out["final_div"] = m.group(1)
 
     # Bank Name
     m = re.search(r"Bank\s+Name\s*[:\-]\s*([^\n\r]+)", text, re.IGNORECASE)
@@ -348,7 +374,7 @@ def main() -> None:
 
         pdf_text = read_pdf_text(pdf_path)
         pdf_fields = extract_fields_from_pdf(pdf_text, excel_name)
-        bold_map = get_field_bold_map(pdf_path)
+        bold_map = get_amount_bold_map(pdf_path)
 
         issues: list[str] = []
         for key, col in col_idx.items():
@@ -365,7 +391,7 @@ def main() -> None:
             # 值正确，再看 SGD 粗体（仅对金额字段）
             if kind == "amount" and key in BOLD_EXPECTED:
                 expected = BOLD_EXPECTED[key]
-                actual = bold_map.get(key)
+                actual = bold_map.get(norm_amount(pdf_val))
                 if actual is None:
                     continue
                 if actual != expected:
