@@ -53,10 +53,11 @@ FIELD_KIND = {
 }
 
 # 期望的粗体状态：True = SGD 应粗体；False = 不应粗体；不在表里则不检查粗体
+# 只有 Final Dividend 那行的 "SGD XXXX" 是粗体
 BOLD_EXPECTED = {
     "pod_amount": False,
     "first_div": False,
-    "admitted": True,
+    "admitted": False,
     "final_div": True,
 }
 
