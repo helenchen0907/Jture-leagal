@@ -88,13 +88,13 @@ def norm_text(v) -> str:
 
 def norm_digits(v) -> str:
     """归一化数字字符串：去掉非数字 + 去掉前导零。
-    这样 Excel 存 85460455 vs PDF 读到 085460455 能匹配；
-    Excel 存 0（占位无数据）vs PDF 没有那行也能匹配（都归一成 ""）。
+    这样 Excel 存 85460455 vs PDF 读到 085460455 能匹配。
+    注意：Excel 占位 "0" 不再当空看待；地址里的 "0" 由专门的异常检测处理。
     """
     if v is None:
         return ""
     s = re.sub(r"\D", "", str(v))
-    return s.lstrip("0")
+    return s.lstrip("0") or ("0" if s else "")
 
 
 def norm_amount(v) -> str:
@@ -213,13 +213,16 @@ def get_amount_bold_map(pdf_path: Path) -> dict[str, bool]:
 AMOUNT_RE = r"(?:SGD|S\$)?\s*([\d,]+\.\d{2})"
 
 
-def extract_fields_from_pdf(text: str, excel_name: str) -> dict:
-    """从 PDF 文本里抽各字段。如果找不到，对应 key 缺失。
+def extract_fields_from_pdf(text: str, excel_name: str) -> tuple[dict, dict]:
+    """从 PDF 文本里抽各字段。
 
-    用每个金额所在的固定短语来定位，不依赖 SGD 出现顺序（避免某封信
-    缺一个 SGD 时把后面的全部错位）。
+    返回 (fields, anomalies)：
+    - fields: 各字段值，如 {pod_amount: "60,000.00", addr1: "...", ...}
+    - anomalies: 检测到的 "0" 异常 {field_key: 描述}，
+                 描述会直接作为 Issue 显示，且会跳过该字段的常规对比
     """
     out: dict[str, str] = {}
+    anomalies: dict[str, str] = {}
 
     # POD 日期：第一段 "POD") dated 17 July 2025"
     m = re.search(
@@ -271,7 +274,7 @@ def extract_fields_from_pdf(text: str, excel_name: str) -> dict:
     if m:
         out["bank_account"] = m.group(1).strip()
 
-    # 地址块：定位收信人名字所在行，后面 3 行依次是 addr1 / addr2 / addr3+country
+    # 地址块：定位收信人名字所在行，按位置取后续几行
     lines = [ln.strip() for ln in text.splitlines()]
     name_up = norm_text(excel_name)
     name_idx = -1
@@ -281,6 +284,22 @@ def extract_fields_from_pdf(text: str, excel_name: str) -> dict:
             break
     if name_idx >= 0:
         after = [ln for ln in lines[name_idx + 1: name_idx + 6] if ln]
+
+        # 1) 异常检测：mail merge 把空字段渲染成了字面 "0"
+        # 位置对应：第 0 行 = addr1, 第 1 行 = addr2, 第 2 行 = addr3 或 (postal + country),
+        # 第 3 行 = country（如果分两行）
+        pos_label = {0: "POD address 1", 1: "POD address 2",
+                     2: "POD address 3", 3: "Country"}
+        pos_key = {0: "addr1", 1: "addr2", 2: "addr3", 3: "country"}
+        for i, line in enumerate(after[:4]):
+            if line == "0":
+                # 整行就是 "0"
+                anomalies[pos_key[i]] = f"Remove 0 in {pos_label[i]}"
+            elif re.match(r"^0\s+[A-Za-z]", line):
+                # "0 SINGAPORE" / "0 MALAYSIA" 这种 0 + 国家名
+                anomalies["country"] = "Remove 0 in Country"
+
+        # 2) 按位置取值
         if len(after) >= 1:
             out["addr1"] = after[0]
         if len(after) >= 2:
@@ -304,7 +323,7 @@ def extract_fields_from_pdf(text: str, excel_name: str) -> dict:
 
     # name 字段也填上，方便对比
     out.setdefault("name", excel_name)
-    return out
+    return out, anomalies
 
 
 # ---------- 主流程 ----------
@@ -383,14 +402,25 @@ def main() -> None:
             continue
 
         pdf_text = read_pdf_text(pdf_path)
-        pdf_fields = extract_fields_from_pdf(pdf_text, excel_name)
+        pdf_fields, anomalies = extract_fields_from_pdf(pdf_text, excel_name)
         bold_map = get_amount_bold_map(pdf_path)
 
         issues: list[str] = []
+        seen_anomalies: set[str] = set()
         for key, col in col_idx.items():
             excel_val = row[col - 1].value
             pdf_val = pdf_fields.get(key, "")
             kind = FIELD_KIND[key]
+
+            # 优先处理 mail merge 的 "0" 异常，跳过该字段的常规对比
+            if key in anomalies:
+                msg = anomalies[key]
+                if msg not in seen_anomalies:
+                    issues.append(msg)
+                    seen_anomalies.add(msg)
+                field_mismatches[key] = field_mismatches.get(key, 0) + 1
+                continue
+
             value_ok = normalize(excel_val, kind) == normalize(pdf_val, kind)
 
             if not value_ok:

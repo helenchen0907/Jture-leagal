@@ -56,8 +56,13 @@ def main():
         return
 
     pdf_text = read_pdf_text(pdf_path)
-    pdf_fields = extract_fields_from_pdf(pdf_text, args.name)
+    pdf_fields, anomalies = extract_fields_from_pdf(pdf_text, args.name)
     bold_map = get_amount_bold_map(pdf_path)
+
+    if anomalies:
+        print(f"\n========== 检测到的 '0' 异常 ==========")
+        for k, v in anomalies.items():
+            print(f"  {k}: {v}")
 
     print(f"\n========== 对比 {args.name} ==========")
     print(f"PDF 文件：{pdf_path}\n")
