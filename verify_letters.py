@@ -87,11 +87,14 @@ def norm_text(v) -> str:
 
 
 def norm_digits(v) -> str:
+    """归一化数字字符串：去掉非数字 + 去掉前导零。
+    这样 Excel 存 85460455 vs PDF 读到 085460455 能匹配；
+    Excel 存 0（占位无数据）vs PDF 没有那行也能匹配（都归一成 ""）。
+    """
     if v is None:
         return ""
     s = re.sub(r"\D", "", str(v))
-    # 去掉前导零，避免 Excel 存为整数(85460455) vs PDF 字符串(085460455) 不匹配
-    return s.lstrip("0") or ("0" if s else "")
+    return s.lstrip("0")
 
 
 def norm_amount(v) -> str:
