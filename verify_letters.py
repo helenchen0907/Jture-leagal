@@ -162,6 +162,46 @@ def read_pdf_text(pdf_path: Path) -> str:
     return text
 
 
+# 抬头/页脚关键字，匹配则跳过（用于从 PDF 提取收信人名字）
+_NAME_SKIP_PATTERNS = [
+    r"SUNSHINE\s+EMPIRE",
+    r"COMPULSORY\s+LIQUIDATION",
+    r"Co\.?\s*Reg",
+    r"PricewaterhouseCoopers",
+    r"Straits\s+View",
+    r"East\s+Tower",
+    r"Marina\s+One",
+    r"Singapore\s+\d",
+    r"Telephone",
+    r"Facsimile",
+    r"PTE\.?\s*LTD",
+    r"The\s+affairs",
+    r"The\s+Liquidators",
+    r"NOTICE\s+OF",
+    r"Dear\s+Sir",
+    r"Our\s+Ref",
+]
+_NAME_SKIP_RE = re.compile("|".join(_NAME_SKIP_PATTERNS), re.IGNORECASE)
+
+
+def extract_recipient_name_from_text(text: str) -> str:
+    """从 PDF 文本里找收信人名字（地址块的第一行）。"""
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if _NAME_SKIP_RE.search(line):
+            continue
+        if re.search(r"\d", line):
+            continue
+        line = re.sub(r"\s+", " ", line)
+        # 全大写字母组成（允许空格、点、连字符、撇号、斜杠、括号、&）
+        if re.fullmatch(r"[A-Z][A-Z\s\.\-'/()&]{1,}", line):
+            if len(re.findall(r"[A-Z]", line)) >= 2:
+                return line
+    return ""
+
+
 def _is_span_bold(span: dict) -> bool:
     """判断 PyMuPDF 的 span 是否粗体。"""
     flags = span.get("flags", 0)
@@ -378,30 +418,45 @@ def main() -> None:
     status_col = ws.max_column + 1
     ws.cell(row=1, column=status_col, value="Issues")
 
-    total = 0
-    pdf_missing = 0
-    rows_with_issues = 0
     field_mismatches: dict[str, int] = {}
     bold_mismatches: dict[str, int] = {}
 
     end_row = args.end_row or ws.max_row
     print(f"处理 Excel 行范围：{args.start_row} - {end_row}")
 
+    # 在指定行范围里，把 Excel 名字归一化后建查找表
+    name_to_row: dict[str, tuple] = {}
     for row in ws.iter_rows(min_row=args.start_row, max_row=end_row):
-        total += 1
         name_cell = row[col_idx["name"] - 1] if "name" in col_idx else None
         if not name_cell or not name_cell.value:
             continue
-
         excel_name = str(name_cell.value).strip()
-        pdf_path = args.pdf_dir / f"{safe_filename(excel_name)}.pdf"
+        name_to_row[norm_text(excel_name)] = (row, excel_name)
 
-        # 没有 PDF 就跳过，不写任何东西到 Issues 列
-        if not pdf_path.exists():
-            pdf_missing += 1
+    # 扫每个 PDF，从内容里抓名字，再去 Excel 找对应行
+    rows_with_issues = 0
+    matched_count = 0
+    unmatched_pdfs: list[tuple[str, str]] = []  # (pdf 文件名, 原因)
+
+    pdf_files = sorted(args.pdf_dir.glob("*.pdf"))
+    print(f"找到 PDF 文件：{len(pdf_files)} 个")
+
+    for pdf_path in pdf_files:
+        pdf_text = read_pdf_text(pdf_path)
+        pdf_name = extract_recipient_name_from_text(pdf_text)
+
+        if not pdf_name:
+            unmatched_pdfs.append((pdf_path.name, "无法从 PDF 提取收信人名字"))
             continue
 
-        pdf_text = read_pdf_text(pdf_path)
+        match = name_to_row.get(norm_text(pdf_name))
+        if not match:
+            unmatched_pdfs.append((pdf_path.name, f"Excel {args.start_row}-{end_row} 行内找不到 {pdf_name}"))
+            continue
+
+        row, excel_name = match
+        matched_count += 1
+
         pdf_fields, anomalies = extract_fields_from_pdf(pdf_text, excel_name)
         bold_map = get_amount_bold_map(pdf_path)
 
@@ -451,11 +506,15 @@ def main() -> None:
 
     print(f"\n========== 核对完成 ==========")
     print(f"行范围：{args.start_row} - {end_row}")
-    print(f"范围内总行数：{total}")
-    print(f"没有对应 PDF（跳过）：{pdf_missing}")
-    print(f"实际核对：{total - pdf_missing}")
-    print(f"  有问题的记录：{rows_with_issues}")
-    print(f"  完全匹配：{total - pdf_missing - rows_with_issues}")
+    print(f"PDF 文件总数：{len(pdf_files)}")
+    print(f"成功匹配到 Excel 行：{matched_count}")
+    print(f"  其中有问题的：{rows_with_issues}")
+    print(f"  完全匹配的：{matched_count - rows_with_issues}")
+    print(f"没匹配上的 PDF：{len(unmatched_pdfs)}")
+    if unmatched_pdfs:
+        print(f"\n未匹配 PDF 列表（前 30 个）：")
+        for fname, reason in unmatched_pdfs[:30]:
+            print(f"  {fname}：{reason}")
     if field_mismatches:
         print(f"\n各字段值不匹配数：")
         for key, cnt in sorted(field_mismatches.items(), key=lambda x: -x[1]):
